@@ -5,6 +5,9 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Http\Controllers\AdminController;
+
+
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -22,10 +25,15 @@ Route::get('/dashboard', function () {
 })->middleware('auth','role.redirect')->name('dashboard');
 
 
-// Admin Dashboard
-Route::get('/admin/dashboard', function () {
-    return Inertia::render('AdminDashboard');
-})->middleware(['auth', 'role:admin'])->name('admin.dashboard');
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/admin/dashboard', function () {
+        return Inertia::render('AdminDashboard');
+    })->name('admin.dashboard');
+
+
+    Route::get('/admin/manage', [AdminController::class, 'index'])->name('admin.manage');
+    Route::post('/admin/manage', [AdminController::class, 'store'])->name('admin.store');
+});
 
 // Customer Dashboard
 Route::get('/customer/dashboard', function () {
