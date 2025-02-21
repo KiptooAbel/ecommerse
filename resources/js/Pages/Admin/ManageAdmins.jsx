@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "@inertiajs/react";
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AuthenticatedLayout from '@/Layouts/AdminAuthenticatedLayout';
 
 export default function ManageAdmins({ admins }) {
     const { data, setData, post, processing, errors, reset } = useForm({

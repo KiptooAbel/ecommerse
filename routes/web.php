@@ -31,7 +31,7 @@ Route::get('/dashboard', function () {
 
 // =================== Admin Routes ===================
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
     // Manage books & categories
     Route::resource('books', BookController::class);

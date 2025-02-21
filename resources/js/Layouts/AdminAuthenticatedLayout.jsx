@@ -35,13 +35,13 @@ function AdminAuthenticatedLayout({ header, children }) {
 
   const navigationItems = [
     { name: 'Dashboard', href: route('dashboard'), icon: LayoutGrid },
-    { name: 'Orders', href: route('dashboard'), icon: ShoppingCart, badge: '12' },
-    { name: 'Products', href: route('dashboard'), icon: Package },
+    { name: 'Orders', href: route('dashboard'), icon: ShoppingCart },
+    { name: 'Products', href: route('books.index'), icon: Package },
     { name: 'Customers', href: route('dashboard'), icon: Users },
     { name: 'Categories', href: route('dashboard'), icon: Tags },
     { name: 'Analytics', href: route('dashboard'), icon: BarChart3 },
     { name: 'Shipping', href: route('dashboard'), icon: Truck },
-    { name: 'Customer Support', href: route('dashboard'), icon: MessageSquare, badge: '3' },
+    { name: 'Customer Support', href: route('dashboard'), icon: MessageSquare},
   ];
 
     return (
