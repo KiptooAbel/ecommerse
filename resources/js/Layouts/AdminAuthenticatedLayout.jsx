@@ -38,7 +38,7 @@ function AdminAuthenticatedLayout({ header, children }) {
     { name: 'Orders', href: route('dashboard'), icon: ShoppingCart },
     { name: 'Products', href: route('books.index'), icon: Package },
     { name: 'Customers', href: route('dashboard'), icon: Users },
-    { name: 'Categories', href: route('dashboard'), icon: Tags },
+    { name: 'Categories', href: route('categories.index'), icon: Tags },
     { name: 'Analytics', href: route('dashboard'), icon: BarChart3 },
     { name: 'Shipping', href: route('dashboard'), icon: Truck },
     { name: 'Customer Support', href: route('dashboard'), icon: MessageSquare},

@@ -1,74 +1,129 @@
 import React from 'react';
-import { Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AdminAuthenticatedLayout';
-
+import { Link } from '@inertiajs/react';
 
 const Index = ({ books }) => {
+  // Ensure books is an array by accessing the data property from Laravel pagination
+  const booksList = books?.data || books || [];
+
   return (
     <AuthenticatedLayout>
+      <div className="p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Books</h1>
+          <Link
+            href={route('books.create')}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          >
+            Add New Book
+          </Link>
+        </div>
 
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Books Management</h1>
-        <Link
-          href={route('books.create')}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-          </svg>
-          Add New Book
-        </Link>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {books.map((book) => (
-          <div key={book.id} className="bg-white rounded-lg shadow-lg overflow-hidden">
-            <div className="p-4">
-              {book.cover_image && (
-                <img
-                  src={book.cover_image}
-                  alt={book.title}
-                  className="w-full h-48 object-cover mb-4 rounded"
-                />
-              )}
-              <h2 className="text-xl font-semibold mb-2">{book.title}</h2>
-              <p className="text-gray-600 mb-2">By {book.author}</p>
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-lg font-bold">${book.price}</span>
-                <span className="text-sm text-gray-500">Stock: {book.stock}</span>
-              </div>
-              <p className="text-sm text-gray-600 mb-4">{book.genre}</p>
-              
-              <div className="flex justify-between mt-4">
-                <Link
-                  href={route('books.edit', book.id)}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded flex items-center gap-2"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                  </svg>
-                  Edit
-                </Link>
-                
-                <Link
-                  href={route('books.destroy', book.id)}
-                  method="delete"
-                  as="button"
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded flex items-center gap-2"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                  </svg>
-                  Delete
-                </Link>
-              </div>
-            </div>
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Title
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Author
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Genre
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Categories
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Price
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Stock
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {booksList.map((book) => (
+                  <tr key={book.id}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        {book.cover_image && (
+                          <img
+                            src={`/storage/${book.cover_image}`}
+                            alt={book.title}
+                            className="h-10 w-10 object-cover rounded mr-3"
+                          />
+                        )}
+                        <div className="text-sm font-medium text-gray-900">{book.title}</div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {book.author}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {book.genre}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <div className="flex flex-wrap gap-1">
+                        {book.categories?.map((category) => (
+                          <span
+                            key={category.id}
+                            className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs"
+                          >
+                            {category.name}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {book.price}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {book.stock}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex space-x-2">
+                        <Link
+                          href={route('books.edit', book.id)}
+                          className="text-indigo-600 hover:text-indigo-900"
+                        >
+                          Edit
+                        </Link>
+                        <Link
+                          href={route('books.destroy', book.id)}
+                          method="delete"
+                          as="button"
+                          className="text-red-600 hover:text-red-900"
+                          onClick={(e) => {
+                            if (!confirm('Are you sure you want to delete this book?')) {
+                              e.preventDefault();
+                            }
+                          }}
+                        >
+                          Delete
+                        </Link>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        ))}
-      </div>
-    </div>        </AuthenticatedLayout>
+        </div>
 
+        {/* Add pagination controls if using Laravel pagination */}
+        {books.links && (
+          <div className="mt-4">
+            {/* You can add your pagination component here */}
+          </div>
+        )}
+      </div>
+    </AuthenticatedLayout>
   );
 };
 

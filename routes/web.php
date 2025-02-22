@@ -40,7 +40,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // Manage users & orders
     Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
     Route::delete('/admin/users/{user}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
-    Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
+  //  Route::resource('orders', OrderController::class)->only(['index']);
 
     // Manage shipping
     Route::patch('/admin/shipping/{shipping}', [ShippingController::class, 'update'])->name('admin.shipping.update');
@@ -53,7 +53,7 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     })->name('customer.dashboard');
 
     // Orders & Payments
-    Route::resource('orders', OrderController::class)->only(['index', 'store', 'show']);
+    Route::resource('orders', OrderController::class)->only(['store', 'show']);
     Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
 
     // Wishlist & Reviews

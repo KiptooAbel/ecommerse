@@ -6,12 +6,13 @@ use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
     public function index()
     {
-        $books = Book::with('categories')->get();
+        $books = Book::with('categories')->paginate(10);
         return Inertia::render('Books/Index', compact('books'));
     }
 
@@ -23,7 +24,7 @@ class BookController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -32,22 +33,34 @@ class BookController extends Controller
             'stock' => 'required|integer',
             'isbn' => 'required|unique:books,isbn',
             'cover_image' => 'nullable|image|max:2048',
+            'categories' => 'required|array',  // Must be an array of category IDs
+            'categories.*' => 'exists:categories,id',
         ]);
 
-        Book::create($request->all());
-
+        if ($request->hasFile('cover_image')) {
+            $path = $request->file('cover_image')->store('books', 'public');
+            $validated['cover_image'] = $path;
+        }
+    
+        $book = Book::create($validated);
+        $book->categories()->attach($request->categories);
+    
+    
         return redirect()->route('books.index')->with('success', 'Book added successfully.');
     }
+    
 
     public function edit(Book $book)
     {
+        $book->load('categories');
+
         $categories = Category::all();
         return Inertia::render('Books/Edit', compact('book', 'categories'));
     }
 
     public function update(Request $request, Book $book)
     {
-        $request->validate([
+        $validated = $request->validate([
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -56,12 +69,25 @@ class BookController extends Controller
             'stock' => 'required|integer',
             'isbn' => "required|unique:books,isbn,{$book->id}",
             'cover_image' => 'nullable|image|max:2048',
+            'categories' => 'required|array',
+            'categories.*' => 'exists:categories,id',
         ]);
 
-        $book->update($request->all());
+    if ($request->hasFile('cover_image')) {
+        // Remove old image if exists
+        if ($book->cover_image) {
+            Storage::disk('public')->delete($book->cover_image);
+        }
+        $path = $request->file('cover_image')->store('books', 'public');
+        $validated['cover_image'] = $path;
+    }
 
+    $book->update($validated);
+    $book->categories()->sync($request->categories);
+    
         return redirect()->route('books.index')->with('success', 'Book updated successfully.');
     }
+    
 
     public function destroy(Book $book)
     {
