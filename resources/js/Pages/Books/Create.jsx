@@ -12,27 +12,53 @@ const Create = ({ categories }) => {
     stock: '',
     isbn: '',
     cover_image: null,
-    categories: [], // Add categories array to form data
+    additional_images: [],
+    categories: [],
   });
 
-  const [imagePreview, setImagePreview] = useState(null);
+  const [coverImagePreview, setCoverImagePreview] = useState(null);
+  const [additionalImagePreviews, setAdditionalImagePreviews] = useState([]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     post(route('books.store'));
   };
 
-  const handleImageChange = (e) => {
+  const handleCoverImageChange = (e) => {
     const file = e.target.files[0];
     setData('cover_image', file);
     
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result);
+        setCoverImagePreview(reader.result);
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleAdditionalImagesChange = (e) => {
+    const files = Array.from(e.target.files);
+    setData('additional_images', [...data.additional_images, ...files]);
+    
+    // Create previews for all new images
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAdditionalImagePreviews(prev => [...prev, reader.result]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removeAdditionalImage = (index) => {
+    const newImages = [...data.additional_images];
+    newImages.splice(index, 1);
+    setData('additional_images', newImages);
+
+    const newPreviews = [...additionalImagePreviews];
+    newPreviews.splice(index, 1);
+    setAdditionalImagePreviews(newPreviews);
   };
 
   const handleCategoryChange = (e) => {
@@ -171,25 +197,69 @@ const Create = ({ categories }) => {
               {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description}</p>}
             </div>
 
-            <div>
-              <label htmlFor="cover_image" className="block text-sm font-medium text-gray-700 mb-1">
-                Cover Image
-              </label>
-              <input
-                type="file"
-                id="cover_image"
-                onChange={handleImageChange}
-                accept="image/*"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {errors.cover_image && <p className="mt-1 text-sm text-red-600">{errors.cover_image}</p>}
-              {imagePreview && (
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  className="mt-2 w-48 h-48 object-cover rounded"
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="cover_image" className="block text-sm font-medium text-gray-700 mb-1">
+                  Cover Image (Primary)
+                </label>
+                <input
+                  type="file"
+                  id="cover_image"
+                  onChange={handleCoverImageChange}
+                  accept="image/*"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-              )}
+                {errors.cover_image && <p className="mt-1 text-sm text-red-600">{errors.cover_image}</p>}
+                {coverImagePreview && (
+                  <div className="mt-2">
+                    <h3 className="text-sm font-medium text-gray-700 mb-1">Cover Preview</h3>
+                    <img
+                      src={coverImagePreview}
+                      alt="Cover Preview"
+                      className="w-48 h-48 object-cover rounded"
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="additional_images" className="block text-sm font-medium text-gray-700 mb-1">
+                  Additional Images
+                </label>
+                <input
+                  type="file"
+                  id="additional_images"
+                  onChange={handleAdditionalImagesChange}
+                  accept="image/*"
+                  multiple
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                {errors.additional_images && <p className="mt-1 text-sm text-red-600">{errors.additional_images}</p>}
+                
+                {additionalImagePreviews.length > 0 && (
+                  <div className="mt-3">
+                    <h3 className="text-sm font-medium text-gray-700 mb-2">Additional Image Previews</h3>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                      {additionalImagePreviews.map((preview, index) => (
+                        <div key={index} className="relative">
+                          <img
+                            src={preview}
+                            alt={`Preview ${index + 1}`}
+                            className="w-full h-24 object-cover rounded"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeAdditionalImage(index)}
+                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="flex justify-end gap-4">

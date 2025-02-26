@@ -4,7 +4,7 @@ import AuthenticatedLayout from '@/Layouts/AdminAuthenticatedLayout';
 
 const Edit = ({ book, categories }) => {
   // Initialize form with existing categories
-  const { data, setData, put, processing, errors } = useForm({
+  const { data, setData, post, processing, errors } = useForm({
     title: book.title || '',
     author: book.author || '',
     description: book.description || '',
@@ -13,34 +13,69 @@ const Edit = ({ book, categories }) => {
     stock: book.stock || '',
     isbn: book.isbn || '',
     cover_image: null,
-    // Ensure we always have the categories array, even if it's empty
+    additional_images: [],
+    remove_images: [],
     categories: book.categories?.map(cat => cat.id.toString()) || [],
   });
 
-  const [imagePreview, setImagePreview] = useState(book.cover_image || null);
+  // Keep track of image previews
+  const [coverImagePreview, setCoverImagePreview] = useState(
+    book.images?.find(img => img.is_primary)?.path 
+      ? `/storage/${book.images.find(img => img.is_primary)?.path}` 
+      : null
+  );
+  
+  // Get additional (non-primary) images from the book
+  const additionalImages = book.images?.filter(img => !img.is_primary) || [];
+  
+  // Track previews for new additional images being uploaded
+  const [newImagePreviews, setNewImagePreviews] = useState([]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Ensure categories are included in the submission
-    put(route('books.update', book.id), {
-      ...data,
-      _method: 'PUT',
-      // Ensure categories is always sent, even if unchanged
-      categories: data.categories.length ? data.categories : book.categories?.map(cat => cat.id.toString()) || [],
+    post(route('books.update', book.id), {
+      onSuccess: () => {
+        // Reset file inputs and image removal state after successful submission
+        setData('cover_image', null);
+        setData('additional_images', []);
+        setData('remove_images', []);
+        setNewImagePreviews([]);
+      },
     });
   };
 
-  const handleImageChange = (e) => {
+  const handleCoverImageChange = (e) => {
     const file = e.target.files[0];
-    setData('cover_image', file);
-    
     if (file) {
+      setData('cover_image', file);
+      
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result);
+        setCoverImagePreview(reader.result);
       };
       reader.readAsDataURL(file);
     }
+  };
+  
+  const handleAdditionalImagesChange = (e) => {
+    const files = Array.from(e.target.files);
+    setData('additional_images', files);
+    
+    // Generate previews for all selected files
+    const previews = [];
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        previews.push(reader.result);
+        setNewImagePreviews([...previews]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleRemoveImage = (imageId) => {
+    const updatedRemoveImages = [...data.remove_images, imageId];
+    setData('remove_images', updatedRemoveImages);
   };
 
   const handleCategoryChange = (e) => {
@@ -55,9 +90,11 @@ const Edit = ({ book, categories }) => {
         <div className="bg-white rounded-lg shadow-lg p-6">
           <h1 className="text-2xl font-bold mb-6">Edit Book: {book.title}</h1>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6" encType="multipart/form-data">
+            {/* Hidden field for method spoofing */}
+            <input type="hidden" name="_method" value="PUT" />
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Other form fields remain the same */}
               <div>
                 <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
                   Title
@@ -86,7 +123,6 @@ const Edit = ({ book, categories }) => {
                 {errors.author && <p className="mt-1 text-sm text-red-600">{errors.author}</p>}
               </div>
 
-              {/* Updated categories select with default value */}
               <div>
                 <label htmlFor="categories" className="block text-sm font-medium text-gray-700 mb-1">
                   Categories
@@ -181,15 +217,16 @@ const Edit = ({ book, categories }) => {
               {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description}</p>}
             </div>
 
+            {/* Cover Image Section */}
             <div>
               <label htmlFor="cover_image" className="block text-sm font-medium text-gray-700 mb-1">
                 Cover Image
               </label>
-              {imagePreview && (
+              {coverImagePreview && (
                 <div className="mb-2">
                   <img
-                    src={imagePreview}
-                    alt="Current cover"
+                    src={coverImagePreview}
+                    alt="Book cover"
                     className="w-48 h-48 object-cover rounded"
                   />
                   <p className="text-sm text-gray-500 mt-1">Current cover image</p>
@@ -198,11 +235,91 @@ const Edit = ({ book, categories }) => {
               <input
                 type="file"
                 id="cover_image"
-                onChange={handleImageChange}
+                onChange={handleCoverImageChange}
                 accept="image/*"
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               {errors.cover_image && <p className="mt-1 text-sm text-red-600">{errors.cover_image}</p>}
+            </div>
+
+            {/* Additional Images Section */}
+            <div>
+              <label htmlFor="additional_images" className="block text-sm font-medium text-gray-700 mb-1">
+                Additional Images
+              </label>
+              
+              {/* Display existing additional images */}
+              {additionalImages.length > 0 && (
+                <div className="mb-4">
+                  <h3 className="text-sm font-medium text-gray-700 mb-2">Current Additional Images</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {additionalImages.map(image => (
+                      <div key={image.id} className="relative">
+                        {!data.remove_images.includes(image.id) ? (
+                          <>
+                            <img 
+                              src={`/storage/${image.path}`} 
+                              alt={image.alt_text} 
+                              className="w-full h-32 object-cover rounded"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveImage(image.id)}
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                              title="Remove image"
+                            >
+                              ×
+                            </button>
+                          </>
+                        ) : (
+                          <div className="w-full h-32 border border-dashed border-gray-300 rounded flex items-center justify-center">
+                            <span className="text-gray-400 text-sm">Image marked for removal</span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updatedRemoveImages = data.remove_images.filter(id => id !== image.id);
+                                setData('remove_images', updatedRemoveImages);
+                              }}
+                              className="ml-2 text-blue-500 underline text-sm"
+                            >
+                              Undo
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Display previews for new images */}
+              {newImagePreviews.length > 0 && (
+                <div className="mb-4">
+                  <h3 className="text-sm font-medium text-gray-700 mb-2">New Images to Upload</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {newImagePreviews.map((preview, index) => (
+                      <div key={index} className="relative">
+                        <img 
+                          src={preview} 
+                          alt={`New image ${index + 1}`} 
+                          className="w-full h-32 object-cover rounded"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* File input for new additional images */}
+              <input
+                type="file"
+                id="additional_images"
+                onChange={handleAdditionalImagesChange}
+                accept="image/*"
+                multiple
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              {errors.additional_images && <p className="mt-1 text-sm text-red-600">{errors.additional_images}</p>}
             </div>
 
             <div className="flex justify-end gap-4">
