@@ -32,6 +32,6 @@ public function images()
 
 public function primaryImage()
 {
-    return $this->hasMany(BookImage::class)->where('is_primary', true)->first();
+    return $this->hasOne(BookImage::class)->where('is_primary', true);
 }
 }
