@@ -35,7 +35,7 @@ function AdminAuthenticatedLayout({ header, children }) {
 
   const navigationItems = [
     { name: 'Dashboard', href: route('dashboard'), icon: LayoutGrid },
-    { name: 'Orders', href: route('dashboard'), icon: ShoppingCart },
+    { name: 'Orders', href: route('admin.orders.index'), icon: ShoppingCart },
     { name: 'Products', href: route('books.index'), icon: Package },
     { name: 'Customers', href: route('dashboard'), icon: Users },
     { name: 'Categories', href: route('categories.index'), icon: Tags },

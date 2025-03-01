@@ -16,6 +16,8 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Admin\OrderManagementController;
+
 
 
 
@@ -37,7 +39,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // Manage users & orders
     Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
     Route::delete('/admin/users/{user}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
-  //  Route::resource('orders', OrderController::class)->only(['index']);
+
+  //  Route for OrderManagement
+  Route::get('/ordersManagement', [OrderManagementController::class, 'index'])->name('admin.orders.index'); // View all orders
+  Route::get('/ordersManagement/{order}', [OrderManagementController::class, 'show'])->name('admin.orders.show'); // View order details
+  Route::patch('/ordersManagement/{order}/status', [OrderManagementController::class, 'updateStatus'])->name('admin.orders.updateStatus'); // Update order status
 
     // Manage shipping
     Route::patch('/admin/shipping/{shipping}', [ShippingController::class, 'update'])->name('admin.shipping.update');
@@ -50,11 +56,12 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     })->name('customer.dashboard');
 
     // Orders & Payments
-    Route::resource('orders', OrderController::class)->only(['store', 'show']);
-    Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index'); // View all orders
+    Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create'); // Order form
+    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store'); // Place an order
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show'); // View a single order
 
-    // Wishlist & Reviews
-    Route::resource('wishlist', WishlistController::class)->only(['index', 'store', 'destroy']);
+
     Route::resource('reviews', ReviewController::class)->only(['store', 'update', 'destroy']);
 
     // Cart Routes
