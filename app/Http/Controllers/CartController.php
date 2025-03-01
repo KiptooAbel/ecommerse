@@ -32,7 +32,6 @@ class CartController extends Controller
 
     public function destroy(Cart $cart)
     {
-        $this->authorize('delete', $cart);
         $cart->delete();
 
         return redirect()->back()->with('success', 'Item removed from cart.');

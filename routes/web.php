@@ -63,7 +63,18 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
 
 
     Route::resource('reviews', ReviewController::class)->only(['store', 'update', 'destroy']);
-
+    
+    Route::post('/wishlist/{wishlist}/move-to-cart', [WishlistController::class, 'moveToCart'])
+    ->name('wishlist.moveToCart');  
+    
+    // View wishlist
+    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+    
+    // Add to wishlist
+    Route::post('/wishlist', [WishlistController::class, 'store'])->name('wishlist.store');
+    
+    // Remove from wishlist
+    Route::delete('/wishlist/{wishlist}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
     // Cart Routes
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart', [CartController::class, 'store'])->name('cart.store');
