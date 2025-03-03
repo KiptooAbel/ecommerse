@@ -4,12 +4,17 @@ import { usePage } from '@inertiajs/react';
 import { Trash, Plus, Minus } from 'lucide-react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-import { useCart } from '../../Hooks/useCart';
+import { useCart } from '../../Hooks/useCart';import { router } from '@inertiajs/react';
+
+
+
 
 const Cart = () => {
   const { cartItems } = usePage().props;
   const { updateQuantity, removeFromCart, isLoading } = useCart();
-
+  const handleCheckout = () => {
+    router.visit('/checkout');
+  };
   // Format price in KSh
   const formatPrice = (price) => {
     return `KSh ${price.toLocaleString()}`;
@@ -131,9 +136,13 @@ const Cart = () => {
                       <span className="font-bold text-blue-900">{formatPrice(calculateSubtotal())}</span>
                     </div>
                     
-                    <button className="w-full bg-blue-700 text-white py-3 rounded-lg hover:bg-blue-800 font-medium">
-                      Proceed to Checkout
+                    <button 
+                            onClick={handleCheckout}
+                            className="w-full bg-blue-700 text-white py-3 rounded-lg hover:bg-blue-800 font-medium"
+                          >
+                            Proceed to Checkout
                     </button>
+
                   </div>
                 </div>
               </div>

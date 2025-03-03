@@ -68,11 +68,11 @@ const Header = () => {
             
             {/* User actions - desktop */}
             <div className="hidden md:flex items-center space-x-6">
-              <a href="#" className="flex items-center hover:text-teal-300 transition-colors duration-200">
+              <a href="/wishlist" className="flex items-center hover:text-teal-300 transition-colors duration-200">
                 <Heart className="h-5 w-5 mr-1" />
                 <span className="text-sm">Wishlist</span>
               </a>
-              <a href="#" className="flex items-center hover:text-teal-300 transition-colors duration-200">
+              <a href="/cart" className="flex items-center hover:text-teal-300 transition-colors duration-200">
                 <ShoppingBag className="h-5 w-5 mr-1" />
                 <span className="text-sm">Cart</span>
               </a>
@@ -116,10 +116,10 @@ const Header = () => {
               <button onClick={toggleSearch} className="p-1.5 hover:bg-indigo-700 rounded-lg transition-colors duration-200">
                 <Search className="h-5 w-5" />
               </button>
-              <a href="#" className="p-1.5 hover:bg-indigo-700 rounded-lg transition-colors duration-200">
+              <a href="/wishlist" className="p-1.5 hover:bg-indigo-700 rounded-lg transition-colors duration-200">
                 <Heart className="h-5 w-5" />
               </a>
-              <a href="#" className="p-1.5 hover:bg-indigo-700 rounded-lg transition-colors duration-200">
+              <a href="/cart" className="p-1.5 hover:bg-indigo-700 rounded-lg transition-colors duration-200">
                 <ShoppingBag className="h-5 w-5" />
               </a>
               <button 

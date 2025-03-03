@@ -25,13 +25,13 @@ class Book extends Model
         return $this->hasMany(Review::class);
     }
     // Add this to App\Models\Book
-public function images()
-{
-    return $this->hasMany(BookImage::class)->orderBy('display_order');
-}
+    public function images()
+    {
+        return $this->hasMany(BookImage::class)->orderBy('display_order');
+    }
 
-public function primaryImage()
-{
-    return $this->hasOne(BookImage::class)->where('is_primary', true);
-}
+    public function primaryImage()
+    {
+        return $this->hasOne(BookImage::class)->where('is_primary', true);
+    }
 }

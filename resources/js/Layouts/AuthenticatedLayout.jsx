@@ -41,8 +41,6 @@ function AuthenticatedLayout({ header, children }) {
         { name: 'Home', href: route('dashboard'), icon: Home },
         { name: 'Browse Books', href: route('dashboard'), icon: BookOpen },
         { name: 'My Library', href: route('dashboard'), icon: Bookmark },
-        { name: 'Wishlist', href: route('dashboard'), icon: Heart},
-        { name: 'Cart', href: route('dashboard'), icon: ShoppingCart},
         { name: 'Reading History', href: route('dashboard'), icon: Clock },
         { name: 'Reviews & Ratings', href: route('dashboard'), icon: Star },
         { name: 'Recommendations', href: route('dashboard'), icon: Shield },
@@ -102,11 +100,11 @@ function AuthenticatedLayout({ header, children }) {
                         <div className="flex items-center gap-2">
                             {/* Wishlist and Cart with icons only on small screens, text on larger */}
                             <div className="flex items-center space-x-3">
-                                <a href="#" className="flex items-center p-1.5 hover:text-teal-300 transition-colors duration-200">
+                                <a href="/wishlist" className="flex items-center p-1.5 hover:text-teal-300 transition-colors duration-200">
                                     <Heart className="h-5 w-5" />
                                     <span className="hidden sm:inline text-xs ml-1">Wishlist</span>
                                 </a>
-                                <a href="#" className="flex items-center p-1.5 hover:text-teal-300 transition-colors duration-200">
+                                <a href="/cart" className="flex items-center p-1.5 hover:text-teal-300 transition-colors duration-200">
                                     <ShoppingCart className="h-5 w-5" />
                                     <span className="hidden sm:inline text-xs ml-1">Cart</span>
                                 </a>

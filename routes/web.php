@@ -17,6 +17,7 @@ use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\OrderManagementController;
+use App\Http\Controllers\CheckoutController;
 
 
 
@@ -61,7 +62,11 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     Route::post('/orders', [OrderController::class, 'store'])->name('orders.store'); // Place an order
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show'); // View a single order
 
+    Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout');
 
+    Route::post('/checkout', [CheckoutController::class, 'checkout'])->name('checkout');
+
+    
     Route::resource('reviews', ReviewController::class)->only(['store', 'update', 'destroy']);
     
     Route::post('/wishlist/{wishlist}/move-to-cart', [WishlistController::class, 'moveToCart'])
