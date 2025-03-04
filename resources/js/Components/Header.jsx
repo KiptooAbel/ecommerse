@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, Heart, ShoppingBag, User, ChevronRight, Menu, X } from 'lucide-react';
+import { Search, Heart, ShoppingBag, User, ChevronDown, Menu, X } from 'lucide-react';
 import Dropdown from '@/Components/Dropdown';
 import { Link, usePage } from '@inertiajs/react';
 
@@ -81,14 +81,14 @@ const Header = () => {
                   <button className="flex items-center gap-2 rounded-lg hover:bg-indigo-700 px-2 py-1.5 transition-colors duration-200">
                     <div className="h-7 w-7 rounded-full bg-teal-100 flex items-center justify-center">
                       <span className="text-sm font-medium text-indigo-700">
-                        {user ? user.name.charAt(0) : 'G'}
+                      {user ? user.name.charAt(0) :<User className="h-5 w-5" />}
+
                       </span>
                     </div>
                     <div className="hidden md:block text-left">
-                      <div className="text-xs font-medium text-white">{user ? user.name : 'Guest'}</div>
-                      <div className="text-xs text-indigo-200">{user ? 'Member' : 'Sign in'}</div>
+                      <div className="text-xs font-medium text-white">{user ? 'Hi '+ user.name : 'Account'}</div>
                     </div>
-                    <ChevronRight className="h-4 w-4 text-indigo-200" />
+                    <ChevronDown className="h-4 w-4 text-indigo-200" />
                   </button>
                 </Dropdown.Trigger>
                 <Dropdown.Content>
@@ -121,6 +121,43 @@ const Header = () => {
               </a>
               <a href="/cart" className="p-1.5 hover:bg-indigo-700 rounded-lg transition-colors duration-200">
                 <ShoppingBag className="h-5 w-5" />
+              </a>
+              <a href="#" className="flex items-center space-x-2 text-indigo-100 hover:text-teal-300 transition-colors duration-200">
+                <div className="text-xs font-medium text-white">
+                  <Dropdown>
+                <Dropdown.Trigger>
+                  <button className="flex items-center gap-2 rounded-lg hover:bg-indigo-700 px-2 py-1.5 transition-colors duration-200">
+                    <div className="h-7 w-7 rounded-full bg-teal-100 flex items-center justify-center">
+                      <span className="text-sm font-medium text-indigo-700">
+                      {user ? user.name.charAt(0) :<User className="h-5 w-5" />}
+
+                      </span>
+                    </div>
+                    <div className="hidden md:block text-left">
+                      <div className="text-xs font-medium text-white">{user ? 'Hi '+ user.name : 'Account'}</div>
+                    </div>
+                    <ChevronDown className="h-4 w-4 text-indigo-200" />
+                  </button>
+                </Dropdown.Trigger>
+                <Dropdown.Content>
+                  {user ? (
+                    <>
+                      <Dropdown.Link href={route('profile.edit')}>My Profile</Dropdown.Link>
+                      <Dropdown.Link href={route('dashboard')}>My Orders</Dropdown.Link>
+                      <Dropdown.Link href={route('dashboard')}>Account Settings</Dropdown.Link>
+                      <Dropdown.Link href={route('logout')} method="post" as="button">
+                        Log Out
+                      </Dropdown.Link>
+                    </>
+                  ) : (
+                    <>
+                      <Dropdown.Link href={route('login')}>Log In</Dropdown.Link>
+                      <Dropdown.Link href={route('register')}>Create Account</Dropdown.Link>
+                    </>
+                  )}
+                </Dropdown.Content>
+              </Dropdown></div>
+
               </a>
               <button 
                 onClick={toggleMenu} 
@@ -171,12 +208,7 @@ const Header = () => {
               <a href="#" className="text-indigo-100 hover:text-teal-300 transition-colors duration-200">School Books</a>
               <a href="#" className="text-indigo-100 hover:text-teal-300 transition-colors duration-200">Book Club</a>
             </nav>
-            <div className="flex justify-center border-t border-indigo-700 pt-4">
-              <a href="#" className="flex items-center space-x-2 text-indigo-100 hover:text-teal-300 transition-colors duration-200">
-                <User className="h-5 w-5" />
-                <span className="text-sm">{user ? 'My Account' : 'Sign In'}</span>
-              </a>
-            </div>
+
           </div>
         )}
       </header>

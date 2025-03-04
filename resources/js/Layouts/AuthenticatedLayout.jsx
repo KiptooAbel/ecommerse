@@ -3,7 +3,7 @@ import { Link, usePage } from '@inertiajs/react';
 import Dropdown from '@/Components/Dropdown';
 import {
     Menu, X, Home, BookOpen, Bookmark, ShoppingCart, Heart,
-    User, Clock, Star, MessageSquare, Shield, Search
+    User, Clock, Star, ChevronDown, MessageSquare, Shield, Search
 } from 'lucide-react';
 
 const SidebarLink = ({ href, icon: Icon, active, children, badge }) => (
@@ -115,13 +115,13 @@ function AuthenticatedLayout({ header, children }) {
                                     <button className="flex items-center gap-2 rounded-lg hover:bg-indigo-700 px-2 py-1.5 transition-colors duration-200">
                                         <div className="h-7 w-7 rounded-full bg-teal-100 flex items-center justify-center">
                                             <span className="text-sm font-medium text-indigo-700">
-                                                {user ? user.name.charAt(0) : 'G'}
+                                                {user.name.charAt(0)}
                                             </span>
                                         </div>
                                         <div className="hidden sm:block text-left">
-                                            <div className="text-xs font-medium text-white">{user ? user.name : 'Guest'}</div>
-                                            <div className="text-xs text-indigo-200">{user ? 'Member' : 'Sign in'}</div>
-                                        </div>
+                                            <div className="text-xs font-medium text-white">{'Hi, '+ user.name}</div>
+                                        </div>                    <ChevronDown className="h-4 w-4 text-indigo-200" />
+
                                     </button>
                                 </Dropdown.Trigger>
                                 <Dropdown.Content>
@@ -180,14 +180,7 @@ function AuthenticatedLayout({ header, children }) {
         {/* Quick stats section */}
         <div className="px-4 py-4">
             <div className="grid grid-cols-2 gap-2">
-                <div className="bg-indigo-700/20 rounded-lg p-2 text-center">
-                    <p className="text-xs text-indigo-200">My Books</p>
-                    <p className="text-lg font-bold text-teal-300">{user ? '12' : '0'}</p>
-                </div>
-                <div className="bg-indigo-700/20 rounded-lg p-2 text-center">
-                    <p className="text-xs text-indigo-200">Credits</p>
-                    <p className="text-lg font-bold text-teal-300">{user ? '250' : '0'}</p>
-                </div>
+
             </div>
         </div>
         
@@ -221,18 +214,10 @@ function AuthenticatedLayout({ header, children }) {
                 <SidebarLink href={route('dashboard')} icon={Bookmark} active={false}>
                     My Library
                 </SidebarLink>
-                <SidebarLink href={route('dashboard')} icon={Heart} active={false} badge={user ? '2' : null}>
-                    Wishlist
-                </SidebarLink>
-                <SidebarLink href={route('dashboard')} icon={ShoppingCart} active={false}>
-                    Cart
-                </SidebarLink>
                 <SidebarLink href={route('dashboard')} icon={Clock} active={false}>
                     Reading History
                 </SidebarLink>
-                <SidebarLink href={route('dashboard')} icon={MessageSquare} active={false}>
-                    Book Clubs
-                </SidebarLink>
+
             </nav>
             
             {/* Support section */}
@@ -250,24 +235,6 @@ function AuthenticatedLayout({ header, children }) {
             </nav>
         </div>
         
-        {/* Promotional card */}
-        <div className="relative px-4 py-4 mt-auto">
-            <div className="mx-1 p-3 rounded-xl bg-gradient-to-r from-indigo-600/30 to-indigo-700/20 backdrop-blur-sm">
-                <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-teal-400 rounded-full flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-indigo-900">
-                            <path d="M9.375 3a1.875 1.875 0 000 3.75h1.875v4.5H3.375A1.875 1.875 0 011.5 9.375v-.75c0-1.036.84-1.875 1.875-1.875h3.193A3.375 3.375 0 0112 2.753a3.375 3.375 0 015.432 3.997h3.943c1.035 0 1.875.84 1.875 1.875v.75c0 1.036-.84 1.875-1.875 1.875H12.75v-4.5h1.875a1.875 1.875 0 10-1.875-1.875V6.75h-1.5V4.875C11.25 3.839 10.41 3 9.375 3z" />
-                            <path d="M11.25 12.75H3v6.75a2.25 2.25 0 002.25 2.25h6v-9zM12.75 12.75v9h6.75a2.25 2.25 0 002.25-2.25v-6.75h-9z" />
-                        </svg>
-                    </div>
-                    <div>
-                        <p className="text-xs text-white font-medium">50% off your first book</p>
-                        <p className="text-xs text-indigo-200">Use code: TALE50</p>
-                    </div>
-                </div>
-            </div>
-            <p className="text-xs text-indigo-400 text-center mt-4">© 2025 TaleStore. All rights reserved.</p>
-        </div>
     </div>
 </aside>
 
